@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1070</width>
+    <width>795</width>
     <height>600</height>
    </rect>
   </property>
@@ -19,34 +19,38 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>795</width>
+    <height>480</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>931</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>SF UI Display</family>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>InterfaceWindow</string>
+   <string>TInterface</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>520</y>
-      <width>561</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Путь к файлу:</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>520</y>
-      <width>181</width>
+      <x>10</x>
+      <y>510</y>
+      <width>121</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Выбор файла</string>
+     <string>Открыть файл</string>
     </property>
    </widget>
    <widget class="QGraphicsView" name="graphicsView">
@@ -62,50 +66,43 @@
    <widget class="QPushButton" name="resetButton">
     <property name="geometry">
      <rect>
-      <x>870</x>
-      <y>190</y>
-      <width>101</width>
+      <x>660</x>
+      <y>510</y>
+      <width>121</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Сбросить</string>
+     <string>Вернуться в начало</string>
     </property>
    </widget>
    <widget class="QComboBox" name="changeBox">
     <property name="geometry">
      <rect>
-      <x>848</x>
-      <y>320</y>
-      <width>151</width>
-      <height>22</height>
+      <x>400</x>
+      <y>510</y>
+      <width>41</width>
+      <height>41</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>870</x>
-      <y>290</y>
-      <width>111</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Выберите событие:</string>
+    <property name="font">
+     <font>
+      <family>SF UI Display</family>
+      <pointsize>16</pointsize>
+     </font>
     </property>
    </widget>
    <widget class="QPushButton" name="doButton">
     <property name="geometry">
      <rect>
-      <x>850</x>
-      <y>360</y>
-      <width>151</width>
+      <x>280</x>
+      <y>510</y>
+      <width>121</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Совершить</string>
+     <string>Перейти в вершину:</string>
     </property>
    </widget>
   </widget>

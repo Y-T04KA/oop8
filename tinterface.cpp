@@ -20,18 +20,17 @@ TInterface::~TInterface() {
 }
 
 void TInterface::pushBt() {
-    QString filePath = QFileDialog::getOpenFileName(this, "Выбрать файл", "", "TXT (*.txt)");
-    ui->label->setText(filePath);
+    QString filePath = QFileDialog::getOpenFileName(this, "Открыть файл", "", "TXT (*.txt)");
     box->clear();
     if (!filePath.isEmpty()){
         if (readCheckGraph(filePath)){
             for (int i=1; i<graph->getAdjacencyMatrix().size()+1; i++){
-                box->addItem("Перейти в вершину " + QString::number(i));
+                box->addItem(QString::number(i));
             }
             used = true;
             drawGraph(graph->getAdjacencyMatrix());
         } else {
-            QMessageBox::critical(this, "Error", "wrong data");
+            QMessageBox::critical(this, "Ошибка", "неверные данные в файле");
         }
     }
 }
@@ -53,7 +52,7 @@ void TInterface::doBt() {
             drawGraph(graph->getAdjacencyMatrix());
         } else {
             box->setCurrentIndex(prevNode-1);
-            QMessageBox::critical(this, "Ошибка", "Невозможно перейти из нынешного состояния в выбранное.");
+            QMessageBox::critical(this, "Ошибка", "Переход невозможен");
         }
     }
 }
@@ -61,44 +60,43 @@ void TInterface::doBt() {
 void TInterface::drawGraph(QVector<QVector<qint16>> graphData) {
     scene = new QGraphicsScene();
     ui->graphicsView->setScene(scene);
-    int numNodes = graphData.size(), nodeSize = 30, startX = 250, startY = 250, radius = 200;
+    auto startX = 250, startY = 250, radius = 200;
+    auto numNodes = graphData.size();
     int activeNode = graph->getActiveNode();
+    double nodeSize = 30;
     for (int i=0; i<numNodes; i++){
-        double angle = 2*M_PI*i/numNodes, arrowSize = 10;
-        int x = startX + radius*cos(angle), y = startY+radius*sin(angle);
-        QGraphicsEllipseItem *node = new QGraphicsEllipseItem(0, 0, nodeSize, nodeSize);
+        double angle = 2*M_PI*i/numNodes;
+        auto x = startX + radius*cos(angle), y = startY+radius*sin(angle);
+        auto *node = new QGraphicsEllipseItem(0, 0, nodeSize, nodeSize);
         node->setPos(x - nodeSize / 2, y - nodeSize / 2);
-        if(i + 1 == activeNode)
-        {
+        if(i + 1 == activeNode){
             QBrush brush(Qt::red);
             QColor color = brush.color();
             color.setAlpha(64);
             brush.setColor(color);
             node->setBrush(brush);
         }
-        QGraphicsTextItem *label = new QGraphicsTextItem(QString::number(i + 1));
+        auto *label = new QGraphicsTextItem(QString::number(i + 1));
         label->setPos(node->pos().x() + nodeSize / 2 - label->boundingRect().width() / 2, node->pos().y() + nodeSize / 2 - label->boundingRect().height() / 2);
         scene->addItem(label);
         scene->addItem(node);
-        for (int j = 0; j < numNodes; j++)
-        {
-            if (graphData[i][j] == 1)
-            {
+        for (int j = 0; j < numNodes; j++){
+            if (graphData[i][j] == 1){
                 double angle2 = 2 * M_PI * j / numNodes;
-                int x2 = startX + radius * cos(angle2), y2 = startY + radius * sin(angle2);
+                auto x2 = startX + radius * cos(angle2), y2 = startY + radius * sin(angle2);
                 double dx = x2 - x, dy = y2 - y, length = sqrt(dx * dx + dy * dy);
                 dx /= length;
                 dy /= length;
-                QGraphicsLineItem *line = new QGraphicsLineItem();
+                auto *line = new QGraphicsLineItem();
                 line->setPen(QPen(Qt::black));
                 line->setLine(QLineF(x + nodeSize / 2 + dx * nodeSize / 2 - (nodeSize / 2), y + nodeSize / 2 + dy * nodeSize / 2 - (nodeSize / 2), x2 + nodeSize / 2 - dx * nodeSize / 2 - (nodeSize / 2), y2 + nodeSize / 2 - dy * nodeSize / 2 - (nodeSize / 2)));
                 QPolygonF arrow;
                 arrow << QPointF(-5, -5) << QPointF(0, 0) << QPointF(-5, 5);
-                QGraphicsPolygonItem *arrowItem = new QGraphicsPolygonItem(arrow);
+                auto *arrowItem = new QGraphicsPolygonItem(arrow);
                 arrowItem->setPen(QPen(Qt::black));
                 arrowItem->setBrush(QBrush(Qt::black));
                 arrowItem->setPos(x2 + nodeSize / 2 - dx * nodeSize / 2 - (nodeSize / 2), y2 + nodeSize / 2 - dy * nodeSize / 2 - (nodeSize / 2));
-                double angle = atan2(dy, dx);
+                angle = atan2(dy, dx);
                 angle = angle * 180 / M_PI;
                 arrowItem->setRotation(angle);
                 scene->addItem(line);
@@ -148,9 +146,8 @@ bool TInterface::readCheckGraph(const QString &filePath) {
     return true;
 }
 
-bool TInterface::check(int prevNode, int curNode) {
-    QVector<QVector<qint16>> adjacencyMatrix = graph->getAdjacencyMatrix();
-    if(adjacencyMatrix[prevNode][curNode] == 1) return true;
+bool TInterface::check(int prev, int cur) {
+    if(graph->getAdjacencyMatrix()[prev][cur] == 1) return true;
     else return false;
 }
 
