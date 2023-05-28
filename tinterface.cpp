@@ -13,7 +13,6 @@ TInterface::TInterface(QWidget *parent) :
     ui->setupUi(this);
     graph = new Graph;
     box = ui->changeBox;
-    connect(box, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangeBoxIndexChanged(int)));
 }
 
 TInterface::~TInterface() {
@@ -25,11 +24,11 @@ void TInterface::pushBt() {
     ui->label->setText(filePath);
     box->clear();
     if (!filePath.isEmpty()){
-        if (readAndValidateGraphFile(filePath)){
+        if (readCheckGraph(filePath)){
             for (int i=1; i<graph->getAdjacencyMatrix().size()+1; i++){
                 box->addItem("Перейти в вершину " + QString::number(i));
             }
-            dirty = true;
+            used = true;
             drawGraph(graph->getAdjacencyMatrix());
         } else {
             QMessageBox::critical(this, "Error", "wrong data");
@@ -38,18 +37,18 @@ void TInterface::pushBt() {
 }
 
 void TInterface::resetBt() {
-    dirty = false;
+    used = false;
     graph->setActiveNode(firstValue);
     box->setCurrentIndex(graph->getActiveNode()-1);
     drawGraph(graph->getAdjacencyMatrix());
-    dirty = true;
+    used = true;
 }
 
 void TInterface::doBt() {
-    if (dirty){
+    if (used){
         int prevNode = graph->getActiveNode();
         int curNode = box->currentIndex()+1;
-        if (checkPossibility(prevNode-1,curNode-1) or !dirty){
+        if (check(prevNode - 1, curNode - 1) or !used){
             graph->setActiveNode(curNode);
             drawGraph(graph->getAdjacencyMatrix());
         } else {
@@ -59,10 +58,10 @@ void TInterface::doBt() {
     }
 }
 
-void TInterface::drawGraph(std::vector<std::vector<int>> graphData) {
+void TInterface::drawGraph(QVector<QVector<qint16>> graphData) {
     scene = new QGraphicsScene();
     ui->graphicsView->setScene(scene);
-    int numNodes = graphData.size(), nodeSize = 30, startX = 400, startY = 400, radius = 200;
+    int numNodes = graphData.size(), nodeSize = 30, startX = 250, startY = 250, radius = 200;
     int activeNode = graph->getActiveNode();
     for (int i=0; i<numNodes; i++){
         double angle = 2*M_PI*i/numNodes, arrowSize = 10;
@@ -109,19 +108,19 @@ void TInterface::drawGraph(std::vector<std::vector<int>> graphData) {
     }
 }
 
-bool TInterface::readAndValidateGraphFile(const QString &filePath) {
+bool TInterface::readCheckGraph(const QString &filePath) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)){
         QMessageBox::critical(this, "Ошибка", "Невозможно открыть файл.");
         return false;
     }
     QTextStream in(&file);
-    QVector<QVector<int>> adjacencyMatrix;
+    QVector<QVector<qint16>> adjacencyMatrix;
     while (!in.atEnd()){
         QString line = in.readLine();
         QStringList values = line.split(' ');
         if (values.size() > 1){
-            QVector<int> row;
+            QVector<qint16> row;
             for (const QString &value : values){
                 bool ok;
                 int intValue = value.toInt(&ok);
@@ -145,26 +144,12 @@ bool TInterface::readAndValidateGraphFile(const QString &filePath) {
         }
     }
     file.close();
-    std::vector<std::vector<int>> stdAdjacencyMatrix = convertToStdVector(adjacencyMatrix);
-    graph->setAdjacencyMatrix(stdAdjacencyMatrix);
+    graph->setAdjacencyMatrix(adjacencyMatrix);
     return true;
 }
 
-std::vector<std::vector<int>> TInterface::convertToStdVector(const QVector<QVector<int>> &qvector) {
-    std::vector<std::vector<int>> stdvector;
-    for (const QVector<int>& innerVector : qvector){
-        std::vector<int> stdInnerVector;
-        stdInnerVector.reserve(innerVector.size());
-        for (const int& value : innerVector){
-            stdInnerVector.push_back(value);
-        }
-        stdvector.push_back(stdInnerVector);
-    }
-    return stdvector;
-}
-
-bool TInterface::checkPossibility(int prevNode, int curNode) {
-    std::vector<std::vector<int>> adjacencyMatrix = graph->getAdjacencyMatrix();
+bool TInterface::check(int prevNode, int curNode) {
+    QVector<QVector<qint16>> adjacencyMatrix = graph->getAdjacencyMatrix();
     if(adjacencyMatrix[prevNode][curNode] == 1) return true;
     else return false;
 }

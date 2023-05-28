@@ -11,6 +11,7 @@
 #include <QGraphicsEllipseItem>
 #include <QMessageBox>
 #include <QComboBox>
+#include <QVector>
 #include "Graph.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,20 +24,19 @@ Q_OBJECT
 public:
     explicit TInterface(QWidget *parent = nullptr);
     ~TInterface() override;
-    bool checkPossibility(int,int);
+    bool check(int, int);
 public slots:
     void pushBt();
     void resetBt();
     void doBt();
 private:
     Ui::TInterface *ui;
-    std::vector<std::vector<int>> convertToStdVector(const QVector<QVector<int>>& qvector);
-    bool readAndValidateGraphFile(const QString &filePath);
-    void drawGraph(std::vector<std::vector<int>> graphData);
+    bool readCheckGraph(const QString &filePath);
+    void drawGraph(QVector<QVector<qint16>> graphData);
     QGraphicsScene *scene;
     Graph *graph;
     QComboBox *box;
-    bool dirty = false;
+    bool used = false;
     int firstValue;
 };
 
